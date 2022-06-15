@@ -10,7 +10,7 @@ Since CXL depends on the physical interface of PCIe, it is necessary to review t
     
   - Hence, combination of 2 simplex makes it `Dual-Simplex Connection`.
     
-- In each `link` there are multiple `lanes`.
+- In each `link` there are multiple `lanes`. 
   
   - in forms of : x1, x2, x4, x8, x16, x32
 - Uses `Serial Communication` rather than parallel.
