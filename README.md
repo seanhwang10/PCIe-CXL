@@ -38,8 +38,6 @@
     + [Standardized Registers](#standardized-registers)
   * [PCIe Ordered Set](#pcie-ordered-set)
 
-
-
 # PCI Express
 
 Since CXL depends on the physical interface of PCIe, it is necessary to review the fundamentals of PCIe. I personally have one summer worth of experience with PCIe during my internship at Samsung Electronics, working with PCIe 5.0 in NAND SSDs. 
@@ -636,6 +634,34 @@ The following is the standard registers in `PCI Type 0 Configuration Space Heder
     
     - `Subsystem Vendor ID` : Card Manufacturer
 
-
-
 ## PCIe Ordered Set
+
+# Compute Express Link (CXL)
+
+공부하고싶은것: 
+
+- Hetrogeneous Computing 
+
+- Server disaggregation
+
+- UCS - Unified Computing System 
+
+Compute Express Link (CXL)
+
+- Leverages PCIe, and targets high performance computational workloads.
+  
+  - Example: AI, Machine learning
+  
+  - 이유: 최근 데이터센터에 빅데이터, ML 등 고집적 워크로드 연산 demand 높음.
+    
+    - 이런 High intensity연산 보조를 위해 GPU, FPGA등 가속기 도입 확대중.
+    
+    - 고성능 컴퓨팅 환경에서 프로세서 <-> 가속기 간 메모리 공유를 통해 초저지연 컴퓨팅 구현하여 서버 내 메모리 리소스 범용성, 확장성 UP.
+
+- 디바이스가 저지연 고 bandwidth로 시스템과 통신하고, 시스템이 디바이스의 메모리에 접근할수 있게 해주는 쌍방으로 이로운 interconnect.
+
+## CXL Basics
+
+- Interconnect for processors, with high bandwidth and low latency.
+  
+  - Aims to establish a memory sharing between host processor and CXL devices.
