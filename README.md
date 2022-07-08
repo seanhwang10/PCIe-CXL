@@ -634,9 +634,9 @@ The following is the standard registers in `PCI Type 0 Configuration Space Heder
     
     - `Subsystem Vendor ID` : Card Manufacturer
 
-## PCIe Ordered Set
+## 
 
-# Compute Express Link (CXL)
+# Personal Note
 
 공부하고싶은것: 
 
@@ -665,3 +665,222 @@ Compute Express Link (CXL)
 - Interconnect for processors, with high bandwidth and low latency.
   
   - Aims to establish a memory sharing between host processor and CXL devices.
+
+- L1 L2 L3 캐시 메모리
+
+- CXL 사용하는 이유가 더 많은 메모리를 사용 가능하게 하기 위해
+  
+  - FPGA로 메모리 추가 기능만 사용하는것같음
+  
+  - 더 가격이 쌈. 컴퓨터에 가까워질수록 (캐시, DRAM등) 가격은 비싸짐.
+
+- 각 서버 유닛당 BMC라는 칩이 있음
+  
+  - BMC는 Out of Band 임. CPU랑 스토리지 등 서버 유닛의 주 목적에 직접적으로는 아무 영향을 끼치지 않음.
+  
+  - 네트워크를 통해서 각 유닛의 BMC를 접근할수 있고 BMC를 통해 유닛의 각종 정보를 얻을 수 있음. 현재 온도, 팬 스피드, 등. 나중에 더 추가하자
+
+- BMC로 접근하는 방법은 Hai 가 알려준대로 터미널 이용해서 들어가면 됨.
+
+Rank Margin Test
+
+Intel MLC - Memory latency checker
+
+PMEM2 - in house memory testing tool
+
+STREAM - benchmark tool
+
+Mt Rainier C-Series Servers
+
+Go through both My Rainer 1U and 2U, focus more on 2U.
+
+- CXL cards go on riser
+  
+  - 2U : up to 8 slots for standard add-ons
+
+## Supporting Memory
+
+R-DIMM, LR-DIMM DDR5 288 pin DIMM and 16 NVDIMM modules
+
+DRAM 종류들임 :
+
+- DIMM : 아무 기능 없는 메모리
+
+- U-DIMM : ECC (Unbuffered or Unregistered DIMM)
+  
+  - 가격 저렴, 저전력 사용, 빠른 응답률 (버퍼가 없기 때문)
+  
+  - 최대 2 Rank 까지 확장 가능.. 채널당 2개 DIMM만 사용 가능.
+
+- R-DIMM : ECC + REG (Registered DIMM)
+  
+  - 메모리에 버퍼를 추가하여 DIMM의 주소와 명령을 기다리고 ECC가 강력함.
+  
+  - DIMMs당 4개 RANK로 확장 가능. 레지스터 칩 때문에 원가 더 비쌈
+
+- LR-DIMM : ECC + REG + 데이터신호 제어 (Load Reduced DIMM)
+  
+  - RDIMM 에 isolation memory buffer 을 적용해서
+
+- NVDIMM : ECC + REG + 데이터신호 제어 + SSD (Non Volatile DIMM)
+
+Feature Types:
+
+- ECC : 데이터 에러 정정 기능
+
+- REG : 다수의 메모리 구성 시, RAM 슬롯 거리 차이로 모듈간 데이터 이동속도 차이로 발생하는 신호왜곡을 방지하는 기능.
+  
+  - Registered DIMM 추가 정보
+
+- 데이터신호 제어 : 버퍼를 추가하여 데이터의 신호를 제어
+
+## CIMC, BMC
+
+/opt/homebrew/Cellar/telnet/64/bin/telnet
+
+- CIMC 는 KVM, BIOS update등 기능으로 쓰임.
+
+- 웹 브라우져에 CIMC IP 그대로 치면 됨.
+
+### Boot:
+
+```bash
+  # BIOS > UEFI built in EFI Shell:
+  Shell> FS3:
+  FS3:\> efi\redhat\grubx64.efi
+```
+
+Press E on linux boot menu >> LINUX Boot edit mode.
+
+`iomem=relaxed` kernel parameter.
+
+Kernel parameter view: `cat /proc/cmdline`
+
+#### BCM Log: `/var/log/sel/log`
+
+리셋:
+
+CIMC -> Chassis -> Faults and Logs ->
+-> System Event Log
+-> Cisco IMC log
+
+## MEMTESTER 돌리기
+
+```shell
+sudo su # ROOT MODE로 만들기
+sudo setpci -s 98:0.0 0x4.L=0x7
+
+sudo daxctl reconfigure-device --mode=system-ram 
+--no-online --force dax0.0
+
+sudo echo "base=0x2080 000000 size=0x80 000000 
+type=uncachable" > /proc/mtrr #숫자 띄우기 없이 
+
+./memtester -p 0x2080000000 1M 10
+# 로그 남기기 
+./memtester -p 0x2080000000 1M 10 > log.txt  
+```
+
+로그 남기기 꿀팁
+
+```bash
+<memtester command> | tee output.txt
+```
+
+FCS : Frame check sum error
+
+### PATH 추가: `sudo nano /etc/paths`
+
+seahwang@SEAHWANG-M-V32G ~ % ssh [admin@172.28.94.55](mailto:admin@172.28.94.55)
+
+C240-WZP24430AC8# connect debug-shell
+
+[ help ]# sldp l
+
+`ssh ip: 172.28.30.195`
+
+telnet ip port
+
+cat /etc/bashrc
+
+change TMOUT to 0 with vi.
+
+`RACK IP: 172.28.30.6 , PORT 2008`
+
+`$rack_fan_control  -c get_sensor_readings;`
+
+Get all sensor reading from BMC
+
+`$ipmi-query sensors all | grep -v "discrete";`
+
+BMC more inclusive; longer
+
+```shell
+ipmi-query sel
+ipmitool -I bmc sel elist
+echo BEGIN THE OEM SEL
+ipmi-query sel oem
+```
+
+generate logs
+
+```
+ipmitool -I bmc sel clear
+ipmi-query sel clear
+```
+
+clear the logs
+
+```
+rack_fan_control -c set_log_level 7
+tail -F /nv/etc/log/eng-repo/messages
+```
+
+debug
+
+`pwmtest getdutycycle all`
+
+get duty cycle of all fans.
+
+### Fan Control
+
+```shell
+$echo 100 > /tmp/fanspeed.txt
+$pwmtest getdutycycle all
+```
+
+콘솔세팅값
+
+console=ttyS0,115200
+
+filter : sed
+
+cxv: awk
+
+## LSPCI
+
+ 1) 경로 : /sbin/lspci
+
+ 2) 요약 : 시스템에 있는 PCI 디바이스 정보를 출력
+
+ 3) 사용 방법 : lspci [옵션]
+
+ 4) 옵션
+
+ -b : 커널을 대신하여 카드를 이용한 IRQ와 주소를 출력
+
+ -m : 디바이스 스크립트에서 이용하기 알맞도록 디바이스 정보를 문자 형태로 출력
+
+ -n : 벤더와 디바이스 코드를 출력
+
+ -s domain bus:slot.func : 지정된 디바이스의 정보만을 출력. PCI domain(0~~ffff), bus(0~~ff), slot(0~~1f), function(0~~7)로 구성되어 있음
+
+ -t : 디바이스 사이에 연결을 트리 형식으로 출력
+
+ -v : 상세한 디바이스 정보를 출력
+
+ -vv : -v 옵션보다 상세한 정보를 출력
+
+ 5) 추가 설명
+
+lspci 명령어는 시스템 관리 명령어로서 시스템에 있는 모든 PCI 디바이스 목록을 출력합니다. 이 명령어는 시스템에 디바이스 드라이버가 정상적으로 동작하는지 확인하거나 드라이버를 디버깅 하는데 사용합니다. lspci를 이용하여 시스템에 설치된 이더넷 디바이스를 검색하고, 자세한 장치 정보를 얻어봅니다. lspci 명령어만 실행하면 시스템의 모든 PCI 디바이스 목록을 출력합니다. grep 명령어를 이용하여 ethernet 스트링이 포함된 라인만 필터링해 봅니다.
