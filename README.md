@@ -436,6 +436,10 @@ There are three methods of TLP routing. TLP Variants that targets one of the 4 `
 
 ![](/Users/seahwang/Documents/GitHub/Cisco-Internship/figures/root%20complex.png)
 
+PCIe Timeout : Transaction 사이에 커맨드 주고 기다리는 시간. 
+
+Root complex 에서 핸들링 함. 
+
 ### PCIe Root Port
 
 - PCIe port inside a root complex. 
