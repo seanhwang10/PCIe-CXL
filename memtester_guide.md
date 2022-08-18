@@ -52,13 +52,13 @@ This section contains booting instructions of the server unit. The unit used for
   
   - It is helpful to change Boot option Priorities to EFI Shell. 
 
-<img title="" src="file:///C:/Users/seahwang/AppData/Roaming/marktext/images/2022-08-08-15-13-34-image.png" alt="" width="435" data-align="inline">
+<img title="" src="file:///C:/Users/seahwang/AppData/Roaming/marktext/images/2022-08-08-15-13-34-image.png" alt="" width="435" data-align="center">
 
 - On EFI Shell, enter `FS4:` followed by `EFI\fedora\grubx64.efi` 
 
 <img src="file:///C:/Users/seahwang/AppData/Roaming/marktext/images/2022-08-08-15-15-57-image.png" title="" alt="" data-align="inline">
 
-- On the grub menu, navigate to `M2 - Red Hat Enterprise Linux Server 9.0` 
+- On the **grub menu**, navigate to `M2 - Red Hat Enterprise Linux Server 9.0` 
 
 <img title="" src="file:///C:/Users/seahwang/AppData/Roaming/marktext/images/2022-08-08-15-33-45-image.png" alt="" data-align="center" width="483">
 
@@ -67,6 +67,7 @@ This section contains booting instructions of the server unit. The unit used for
 - Navigate to `linux /boot/vmlinuz-5.14.0-70.13.1.el9_0.x86_64` and add `iomem=relaxed` at the end of it .
   
   - This is all the command line parameters that will be loaded into kernel upon booting. 
+  - if Automatically boot ,,, memtester mmap error 
 
 <img title="" src="file:///C:/Users/seahwang/AppData/Roaming/marktext/images/2022-08-08-15-36-50-image.png" alt="" data-align="center" width="517">
 
@@ -122,15 +123,17 @@ sudo echo "base=0x2080000000 size=0x80000000 type=uncachable" > /proc/mtrr
 
 ## 2.1. Configuring FPGA as a CXL Device
 
-
-
-
-
 ## 2.2. Reconfiguring CXL card memory
 
 ## 2.3. Adding CXL to Memory Type Range Register (MTRR)
 
 ## 2.4. Memtester
+
+Path: 
+
+## 2.5 Modified Memtesters
+
+## 2.6 Automated Scripts
 
 # 3. System Environment Setup
 
